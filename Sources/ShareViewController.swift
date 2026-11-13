@@ -12,6 +12,7 @@ final class ShareViewController: NSViewController, NSTextFieldDelegate {
     private var firstSuffix = ""
     private var choice: CheckedContinuation<SaveChoice, Never>?
     private var form: NSStackView?
+    private let shareSize = NSSize(width: 500, height: 320)
 
     private enum SaveChoice {
         case save, chooseDirectory, cancel
@@ -24,8 +25,9 @@ final class ShareViewController: NSViewController, NSTextFieldDelegate {
     }
 
     override func loadView() {
-        view = NSView(frame: NSRect(x: 0, y: 0, width: 500, height: 85))
-        preferredContentSize = view.frame.size
+        // The host can size the share window before the attachments finish loading.
+        preferredContentSize = shareSize
+        view = NSView(frame: NSRect(origin: .zero, size: shareSize))
         status.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(status)
         NSLayoutConstraint.activate([
@@ -118,15 +120,22 @@ final class ShareViewController: NSViewController, NSTextFieldDelegate {
         filename.setAccessibilityLabel("自定义文件名")
         preview.font = .monospacedSystemFont(ofSize: 11, weight: .regular)
         preview.textColor = .secondaryLabelColor
+        preview.maximumNumberOfLines = 2
+        preview.lineBreakMode = .byTruncatingMiddle
 
         let directory = NSTextField(wrappingLabelWithString: savedDirectory?.path ?? "保存时选择目录")
         directory.textColor = .secondaryLabelColor
+        directory.maximumNumberOfLines = 2
+        directory.lineBreakMode = .byTruncatingMiddle
+        directory.toolTip = savedDirectory?.path
         let choose = NSButton(title: "选择目录…", target: self, action: #selector(chooseFolder))
         let cancel = NSButton(title: "取消", target: self, action: #selector(cancelSave))
         cancel.keyEquivalent = "\u{1b}"
         let save = NSButton(title: "保存", target: self, action: #selector(saveHere))
         let buttons = NSStackView(views: savedDirectory == nil ? [cancel, choose] : [cancel, choose, save])
+        buttons.orientation = .horizontal
         buttons.alignment = .centerY
+        (savedDirectory == nil ? choose : save).keyEquivalent = "\r"
 
         var rows: [NSView] = [NSTextField(labelWithString: "群名或会话名（可选）"), conversation]
         if attachmentCount == 1 {
@@ -146,13 +155,19 @@ final class ShareViewController: NSViewController, NSTextFieldDelegate {
         for field in [conversation, filename, preview, directory] where field.superview != nil {
             field.widthAnchor.constraint(equalTo: stack.widthAnchor).isActive = true
         }
+        for row in rows {
+            row.setContentCompressionResistancePriority(.required, for: .vertical)
+        }
+        conversation.heightAnchor.constraint(equalToConstant: 24).isActive = true
+        if attachmentCount == 1 {
+            filename.heightAnchor.constraint(equalToConstant: 24).isActive = true
+        }
         NSLayoutConstraint.activate([
             stack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             stack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             stack.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
             stack.bottomAnchor.constraint(lessThanOrEqualTo: view.bottomAnchor, constant: -16)
         ])
-        preferredContentSize = NSSize(width: 500, height: attachmentCount == 1 ? 320 : 245)
         status.isHidden = true
         form = stack
     }
