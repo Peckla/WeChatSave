@@ -1,10 +1,10 @@
 # WeChatSave
 
-WeChatSave 是一个 macOS 原生应用。它通过系统共享菜单接收微信合并转发生成的 ZIP，并将原文件保存到你选择的位置。
+受 [Dukou](https://github.com/qzz0518/Dukou) 启发，WeChatSave 独立实现了一个轻量的 macOS 共享扩展，用于将微信导出的原始 ZIP 保存到指定目录。
 
 ## 从源码构建并运行
 
-项目通过 GitHub 提供源码，请在每台 Mac 上自行构建。构建默认采用本机临时签名，无需付费 Apple Developer Program 会员、Developer ID 证书或 Apple 公证。
+项目目前供个人使用，采用源码分发。有需要的用户请拉取代码并在自己的 Mac 上编译。构建默认采用本机临时签名，无需付费 Apple Developer Program 会员、Developer ID 证书或 Apple 公证。
 
 需要 macOS 14 或以上、Git，以及包含 Swift 编译器的 Xcode Command Line Tools 或 Xcode。还没安装工具时，先执行并完成安装：
 
@@ -43,7 +43,5 @@ open dist/WeChatSave.app
 如果已启用扩展但微信菜单还没出现入口，用 ⌘Q 完全退出微信，再重新打开。可先用 Finder 分享一个本地 ZIP 测试入口和保存行为。
 
 分享扩展通过 macOS 的目录选择器获得写入权限，并通过 macOS 安全作用域书签记住目录。构建目录与微信分享时选择的保存目录相互独立。
-
-技术参考：[Dukou](https://github.com/qzz0518/Dukou) 的 macOS 共享扩展入口与文件交接。
 
 保存前可填写群名或会话名，应用会记住上次输入。默认文件名固定为 `会话名_YYYY-MM-DD_HHmm--YYYY-MM-DD_HHmm.zip`，两端分别是最早和最晚的消息时间。同一分钟也会写出两端。未填会话名时使用「微信聊天」，无法识别消息时间时，两端都使用本机导出时间。分享单个 ZIP 时也可直接填写完整文件名。
