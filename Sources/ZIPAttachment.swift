@@ -114,11 +114,13 @@ struct ZIPAttachment {
 
 enum ZIPError: LocalizedError {
     case unreadableAttachment
+    case invalidFilename
     case nameUnavailable
 
     var errorDescription: String? {
         switch self {
         case .unreadableAttachment: "没有收到可读取的 ZIP 文件。"
+        case .invalidFilename: "请输入有效的文件名。"
         case .nameUnavailable: "目标目录中已有太多同名 ZIP 文件。"
         }
     }

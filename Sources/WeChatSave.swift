@@ -9,7 +9,7 @@ struct WeChatSave: App {
                     .font(.headline)
                 Text("多选聊天记录 → 合并转发 → 转发到其他应用 → Save WeChat ZIP")
                     .fixedSize(horizontal: false, vertical: true)
-                Text("首次分享时选择保存目录。勾选「记住此目录」，下次即可直接保存。")
+                Text("首次分享时选择保存目录。勾选「记住此目录」，下次会默认打开该目录。")
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
